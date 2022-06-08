@@ -11,43 +11,32 @@
              x:Name="xMainPage">
 
     <ContentPage.Resources>
-        <Style x:Key="DateTimeLabelStyle"
+        <ResourceDictionary>
+            <Style x:Key="DateTimeLabelStyle"
                TargetType="Label">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="FontAttributes" Value="Bold" />
-        </Style>
-        
-        <Style x:Key="TrueLabelStyle"
-               TargetType="Label">
-            <Setter Property="TextDecorations" Value="Strikethrough" />
-            <Setter Property="TextColor" Value="Gray" />
-        </Style>
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
 
-        <Style x:Key="FlaseLabelStyle"
-               TargetType="Label">
-            <Setter Property="TextDecorations" Value="None" />
-            <Setter Property="TextColor" Value="Black" />
-        </Style>
+            <Color x:Key="TrueLabelTextColor">Gray</Color>
+            <Color x:Key="FalseLabelTextColor">Black</Color>
+            <toolkit:BoolToObjectConverter x:Key="BoolToTextColorLabelConverter" 
+                                   TrueObject="{StaticResource TrueLabelTextColor}" 
+                                   FalseObject="{StaticResource FalseLabelTextColor}"/>
 
-        <toolkit:BoolToObjectConverter x:Key="BoolToStyleLabelConverter" 
-                                   TrueObject="{StaticResource TrueLabelStyle}" 
-                                   FalseObject="{StaticResource FlaseLabelStyle}"/>
+            <TextDecorations x:Key="TrueLabelTextDecorations">Strikethrough</TextDecorations>
+            <TextDecorations x:Key="FalseLabelTextDecorations">None</TextDecorations>
 
-        <Style x:Key="TrueIsCompleteStyle"
-               TargetType="CheckBox">
-            <Setter Property="Color" Value="Gray" />
-        </Style>
+            <toolkit:BoolToObjectConverter x:Key="BoolToTextDecorationsLabelConverter" 
+                                   TrueObject="{StaticResource TrueLabelTextDecorations}" 
+                                   FalseObject="{StaticResource FalseLabelTextDecorations}"/>
 
-        <Style x:Key="FlaseIsCompleteStyle"
-               TargetType="CheckBox">
-            <Setter Property="Color" Value="Purple" />
-        </Style>
-
-        <toolkit:BoolToObjectConverter x:Key="BoolToStyleIsCompleteConverter" 
-                                   TrueObject="{StaticResource TrueIsCompleteStyle}" 
-                                   FalseObject="{StaticResource FlaseIsCompleteStyle}"/>
-        <!--<toolkit:ItemTappedEventArgsConverter x:Key="ItemTappedConverter" />-->
-
+            <Color x:Key="TrueCheckBoxColor">Gray</Color>
+            <Color x:Key="FalseCheckBoxColor">Purple</Color>
+            <toolkit:BoolToObjectConverter x:Key="BoolToColorIsCompleteConverter" 
+                                   TrueObject="{StaticResource TrueCheckBoxColor}" 
+                                   FalseObject="{StaticResource FalseCheckBoxColor}"/>
+        </ResourceDictionary>
     </ContentPage.Resources>
 
     <AbsoluteLayout BackgroundColor="CadetBlue">
@@ -68,7 +57,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout x:DataType="model:TaskModel" Spacing="0" Orientation="Vertical">
-                            <Frame HeightRequest="16" CornerRadius="10" HasShadow="True">
+                            <Frame Padding="10,5,10,5" HeightRequest="34" CornerRadius="8" HasShadow="True">
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Path=TaskTappeCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}" 
                                                       CommandParameter="{Binding .}" />
@@ -76,11 +65,13 @@
 
                                 <StackLayout Orientation="Horizontal">
                                     <Label 
-                                    Style="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToStyleLabelConverter}}" 
-                                    Text="{Binding Name}" 
-                                    MaxLines="1"
-                                    LineBreakMode="TailTruncation"
-                                    HorizontalOptions="FillAndExpand"/>
+                                        VerticalOptions="CenterAndExpand"
+                                        TextColor="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToTextColorLabelConverter}}" 
+                                        TextDecorations="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToTextDecorationsLabelConverter}}" 
+                                        Text="{Binding Name}" 
+                                        MaxLines="1"
+                                        LineBreakMode="TailTruncation"
+                                        HorizontalOptions="FillAndExpand"/>
                                     <behavior:EventToCommandObserver
                                         Command="{Binding Path=IsCompleteTappedCommand, Mode=OneTime, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}"
                                         CommandParameter="{Binding .}"
@@ -88,7 +79,7 @@
                                         <CheckBox 
                                             x:Name="xIsComplete" Grid.Column="1"
                                             behavior:EventToCommandObserver.EventName="CheckedChanged"
-                                            Style="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToStyleIsCompleteConverter}}" 
+                                            Color="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToColorIsCompleteConverter}}" 
                                             IsChecked="{Binding IsComplete}"/>
                                     </behavior:EventToCommandObserver>
                                    
