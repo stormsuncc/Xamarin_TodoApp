@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:behavior="clr-namespace:TodoApp.Behaviors"
+             xmlns:viewmodel="clr-namespace:TodoApp.ViewModels"
+             xmlns:model="clr-namespace:TodoApp.Models"
+             x:Class="TodoApp.MainPage"
+             x:DataType="viewmodel:MainPageViewModel"
+             NavigationPage.HasNavigationBar="False"
+             x:Name="xMainPage">
+
+    <ContentPage.Resources>
+        <Style x:Key="DateTimeLabelStyle"
+               TargetType="Label">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontAttributes" Value="Bold" />
+        </Style>
+        
+        <Style x:Key="TrueLabelStyle"
+               TargetType="Label">
+            <Setter Property="TextDecorations" Value="Strikethrough" />
+            <Setter Property="TextColor" Value="Gray" />
+        </Style>
+
+        <Style x:Key="FlaseLabelStyle"
+               TargetType="Label">
+            <Setter Property="TextDecorations" Value="None" />
+            <Setter Property="TextColor" Value="Black" />
+        </Style>
+
+        <toolkit:BoolToObjectConverter x:Key="BoolToStyleLabelConverter" 
+                                   TrueObject="{StaticResource TrueLabelStyle}" 
+                                   FalseObject="{StaticResource FlaseLabelStyle}"/>
+
+        <Style x:Key="TrueIsCompleteStyle"
+               TargetType="CheckBox">
+            <Setter Property="Color" Value="Gray" />
+        </Style>
+
+        <Style x:Key="FlaseIsCompleteStyle"
+               TargetType="CheckBox">
+            <Setter Property="Color" Value="Purple" />
+        </Style>
+
+        <toolkit:BoolToObjectConverter x:Key="BoolToStyleIsCompleteConverter" 
+                                   TrueObject="{StaticResource TrueIsCompleteStyle}" 
+                                   FalseObject="{StaticResource FlaseIsCompleteStyle}"/>
+        <!--<toolkit:ItemTappedEventArgsConverter x:Key="ItemTappedConverter" />-->
+
+    </ContentPage.Resources>
+
+    <AbsoluteLayout BackgroundColor="CadetBlue">
+        <Grid Padding="20, 10, 20, 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Label Text="Thursday,2 June 2022" Style="{StaticResource DateTimeLabelStyle}" Grid.Row="0" Grid.Column="0"/>
+            <Label Text="3:19 pm" Style="{StaticResource DateTimeLabelStyle}" Grid.Row="0" Grid.Column="1"/>
+
+            <CollectionView Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding TaskModels}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout x:DataType="model:TaskModel" Spacing="0" Orientation="Vertical">
+                            <Frame HeightRequest="16" CornerRadius="10" HasShadow="True">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=TaskTappeCommand, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}" 
+                                                      CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+
+                                <StackLayout Orientation="Horizontal">
+                                    <Label 
+                                    Style="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToStyleLabelConverter}}" 
+                                    Text="{Binding Name}" 
+                                    MaxLines="1"
+                                    LineBreakMode="TailTruncation"
+                                    HorizontalOptions="FillAndExpand"/>
+                                    <behavior:EventToCommandObserver
+                                        Command="{Binding Path=IsCompleteTappedCommand, Mode=OneTime, Source={RelativeSource AncestorType={x:Type viewmodel:MainPageViewModel}}}"
+                                        CommandParameter="{Binding .}"
+                                        >
+                                        <CheckBox 
+                                            x:Name="xIsComplete" Grid.Column="1"
+                                            behavior:EventToCommandObserver.EventName="CheckedChanged"
+                                            Style="{Binding Source={Reference xIsComplete}, Path=IsChecked, Converter={StaticResource BoolToStyleIsCompleteConverter}}" 
+                                            IsChecked="{Binding IsComplete}"/>
+                                    </behavior:EventToCommandObserver>
+                                   
+                                </StackLayout>
+                            </Frame>
+                            <BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="8"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <Frame 
+            BackgroundColor="Purple"
+            CornerRadius="25"
+            Padding="0"
+            AbsoluteLayout.LayoutFlags="PositionProportional"  
+            AbsoluteLayout.LayoutBounds=".95,.95,50,50" >
+            <Frame.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding AddTappedCommand}" />
+            </Frame.GestureRecognizers>
+            <Label Text="+" TextColor="White" FontSize="30" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        </Frame>
+    </AbsoluteLayout>
+
+</ContentPage>

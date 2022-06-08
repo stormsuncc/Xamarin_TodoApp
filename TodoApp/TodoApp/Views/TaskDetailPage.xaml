@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="TodoApp.Views.TaskDetailPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IntToBoolConverter x:Key="IntToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout
+            Margin="20"
+            Spacing="10"
+            VerticalOptions="StartAndExpand">
+
+                <Label Text="Name" />
+                <Entry Text="{Binding TaskModel.Name, Mode=TwoWay}" />
+
+                <StackLayout Orientation="Horizontal">
+                    <Label
+                    Margin="0,10"
+                    HorizontalOptions="StartAndExpand"
+                    Text="Done" />
+                    <Switch HorizontalOptions="EndAndExpand" IsToggled="{Binding TaskModel.IsComplete, Mode=TwoWay}" />
+                </StackLayout>
+
+                <Button Command="{Binding SaveCommand}" Text="Save" />
+
+                <Button Command="{Binding DeleteCommand}" IsVisible="{Binding TaskModel.Id, Converter={StaticResource IntToBoolConverter}}" Text="Delete" />
+
+                <Button Command="{Binding CancelCommand}" Text="Cancel" />
+
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
